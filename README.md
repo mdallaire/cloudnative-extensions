@@ -36,3 +36,5 @@ Container images for [cloudnative-pg](https://cloudnative-pg.io/) with the follo
 
 To build the Dockerfile locally, you need to pass the `CNPG_TAG`, `VECTORCHORD_TAG`, and `TIMESCALE_TAG` args. For example:  
 `docker build . --build-arg="CNPG_TAG=17.9" --build-arg="VECTORCHORD_TAG=1.1.1" --build-arg="TIMESCALE_TAG=2.26.4"`
+
+
