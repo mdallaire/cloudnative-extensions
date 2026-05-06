@@ -28,7 +28,7 @@ jobs:
        uses: mikefarah/yq@v4.52.5
        id: get-versions
        with:
-        cmd: yq eval -o=json -I=0 '{"cnpg": .cnpg, "vectorchord": .vectorchord, "timescaledb": .timescaledb}' versions.yaml
+        cmd: yq eval -o=json -I=0 versions.yaml
 
   build_and_push:
     runs-on: ubuntu-latest
