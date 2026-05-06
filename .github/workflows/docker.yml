@@ -28,7 +28,7 @@ jobs:
        uses: mikefarah/yq@v4.52.5
        id: get-versions
        with:
-        cmd: yq eval -o=json -I=0 versions.yaml
+        cmd: yq eval -o=json -I=0 '{"cnpg": .cnpg, "vectorchord": .vectorchord, "timescaledb": .timescaledb}' versions.yaml
 
   build_and_push:
     runs-on: ubuntu-latest
@@ -95,6 +95,12 @@ jobs:
           pg_major=$(echo ${{ matrix.cnpg }} | cut -d'.' -f1)
           echo "pg_major=$pg_major" >> "$GITHUB_OUTPUT"
 
+      - name: Set major TimescaleDB version
+        id: ts_version
+        run: |
+          ts_major=$(echo ${{ matrix.timescaledb }} | cut -d'.' -f1)
+          echo "ts_major=$ts_major" >> "$GITHUB_OUTPUT"
+
       - name: Generate docker image tags
         id: metadata
         uses: docker/metadata-action@v6
@@ -106,8 +112,8 @@ jobs:
             name=ghcr.io/${{ github.repository }}
             name=tensorchord/cloudnative-vectorchord
           tags: |
-            type=raw,value=${{ matrix.cnpg }}-${{ matrix.vectorchord }},enable=${{ steps.should-release.outputs.result }}
-            type=raw,value=${{ steps.version.outputs.pg_major }}-${{ matrix.vectorchord }},enable=${{ steps.should-release.outputs.result }}
+            type=raw,value=${{ matrix.cnpg }}-vc${{ matrix.vectorchord }}-ts${{ matrix.timescaledb }},enable=${{ steps.should-release.outputs.result }}
+            type=raw,value=${{ steps.version.outputs.pg_major }}-vc${{ matrix.vectorchord }}-ts${{ steps.ts_version.outputs.ts_major }},enable=${{ steps.should-release.outputs.result }}
             type=raw,value=${{ matrix.cnpg }},enable=${{ steps.should-release.outputs.result }}
             type=raw,value=${{ steps.version.outputs.pg_major }},enable=${{ steps.should-release.outputs.result }}
 
@@ -124,6 +130,7 @@ jobs:
           build-args: |
             CNPG_TAG=${{ matrix.cnpg }}
             VECTORCHORD_TAG=${{ matrix.vectorchord }}
+            TIMESCALE_TAG=${{ matrix.timescaledb }}
 
   results:
       if: ${{ always() }}

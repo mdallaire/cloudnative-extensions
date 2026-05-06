@@ -12,3 +12,6 @@ cnpg:
 vectorchord:
   # renovate: datasource=github-releases depName=tensorchord/VectorChord
   - "1.1.1"
+timescaledb:
+  # renovate: datasource=github-releases depName=timescale/timescaledb
+  - "2.26.4"
