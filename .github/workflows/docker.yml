@@ -103,7 +103,6 @@ jobs:
             latest=false
           images: |
             name=ghcr.io/${{ github.repository }}
-            name=tensorchord/cloudnative-vectorchord
           tags: |
             type=raw,value=${{ matrix.cnpg }}-vc${{ matrix.vectorchord }}-ts${{ matrix.timescaledb }},enable=${{ steps.should-release.outputs.result }}
             type=raw,value=${{ steps.version.outputs.pg_major }}-vc${{ matrix.vectorchord }}-ts${{ steps.ts_version.outputs.ts_major }},enable=${{ steps.should-release.outputs.result }}
