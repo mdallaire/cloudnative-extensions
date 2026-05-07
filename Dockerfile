@@ -5,6 +5,7 @@ FROM ghcr.io/cloudnative-pg/postgresql:$CNPG_TAG-system-trixie
 ARG CNPG_TAG
 ARG VECTORCHORD_TAG
 ARG TIMESCALE_TAG
+ARG POSTGIS_MAJOR
 ARG TARGETARCH
 
 # drop to root to install packages
@@ -33,10 +34,25 @@ RUN <<EOT
   ts_pkg="timescaledb-2-postgresql-$pg_major"
   ts_full_version=$(apt-cache show "$ts_pkg" | awk '/^Version:/{print $2}' | grep "^${TIMESCALE_TAG}~debian" | head -1)
   apt-get install -y --no-install-recommends "$ts_pkg=$ts_full_version"
+EOT
 
-  # Cleanup
+# Install PostGIS
+RUN <<EOT
+  set -eux
+
+  pg_major=$(echo "$CNPG_TAG" | cut -d'.' -f1)
+  apt-get update
+  apt-get install -y --no-install-recommends \
+    "postgresql-$pg_major-postgis-$POSTGIS_MAJOR" \
+    "postgresql-$pg_major-postgis-$POSTGIS_MAJOR-scripts"
+EOT
+
+# Cleanup
+RUN <<EOT
+  set -eux
+
   apt-get purge -y curl
-  rm /etc/apt/sources.list.d/timescaledb.list /etc/apt/trusted.gpg.d/timescale.gpg
+  rm -f /etc/apt/sources.list.d/timescaledb.list /etc/apt/trusted.gpg.d/timescale.gpg
   rm -rf /var/cache/apt/*
 EOT
 
